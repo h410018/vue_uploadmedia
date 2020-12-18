@@ -247,7 +247,6 @@
 import $ from 'jquery'
 import axios from 'axios'
 import cancelImg from '../assets/images/cancel.png' // 從 asset 匯入 cancel 圖片
-// import { getRespose } from '../service/getresponse'
 import DateTimePickerInput from './DateTimePickerInput'
 import NewInput from './NewInput'
 
