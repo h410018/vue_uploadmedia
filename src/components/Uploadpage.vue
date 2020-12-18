@@ -404,7 +404,7 @@ export default {
         .then(response => {
           formData.append('sender_ip', response.data.ip)
           axios
-            .post('http://localhost:5000/api/upload', formData, {
+            .post('/api/upload', formData, {
               headers: {
                 'Content-Type': 'multipart/form-data'
               }
