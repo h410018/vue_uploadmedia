@@ -384,7 +384,6 @@ export default {
     },
     // 傳送資料
     postFormData: function () {
-      console.log(this.check)
       $('.blockarea').css({
         opacity: 1,
         display: 'block'

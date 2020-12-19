@@ -12,7 +12,7 @@ const store = new Vuex.Store({
     setDefaultAuthHeader (state) {
       axios({
         method: 'get',
-        url: 'http://localhost:5000/api/setheader'
+        url: '/api/setheader'
       })
         .then(function (response) {
           window.sessionStorage.setItem('token', response.data.token)
