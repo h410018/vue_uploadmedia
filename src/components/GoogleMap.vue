@@ -88,7 +88,7 @@ export default {
         type: 'GET',
         url: 'https://maps.googleapis.com/maps/api/geocode/json?latlng=' + pos.lat +
               ', ' + pos.lng +
-              '&key=AIzaSyCOjqwIEwZxqICNaRJmBuLcZYdqtuUcA3Y',
+              '&key=',
         success: function (data, textStatus, jqXHR) {
           //
         },
