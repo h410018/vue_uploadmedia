@@ -1,5 +1,6 @@
 # vue_uploadmedia
 
+網址：https://vue-uploadmedia.herokuapp.com/uploadpage  
 
 重構 uploadmedia 項目.  
 
@@ -15,7 +16,7 @@ Thirdparty api: google map api
 
 施作概覽:  
 1. 前端從原生 html 改為 vue 框架  
-2. 後端 post 資料時有入 JWT 驗證  
+2. 後端 post 資料時加入 JWT 驗證  
 3. 定位功能有串接 gooogle map api 的資訊  
 
 ## Project setup
@@ -36,6 +37,11 @@ npm run build
 ### Lints and fixes files
 ```
 npm run lint
+```
+
+### Start server
+```
+npm run start
 ```
 
 ### Customize configuration
