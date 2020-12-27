@@ -20,7 +20,7 @@ module.exports = {
             service: 'gmail',
             auth: {
                 user: 'h410018@gmail.com',
-                pass: ''
+                pass: 'jqarclwjhlgtxpdc'
             }
         });
         // 設置郵件內容
