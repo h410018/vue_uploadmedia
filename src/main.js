@@ -4,6 +4,8 @@ import router from './router'
 import * as VueGoogleMaps from 'vue2-google-maps'
 import store from './store/store'
 import LoadScript from 'vue-plugin-load-script'
+import ElementUI from 'element-ui'
+import 'element-ui/lib/theme-chalk/index.css'
 
 Vue.config.productionTip = false
 
@@ -15,6 +17,8 @@ Vue.use(VueGoogleMaps, {
 })
 
 Vue.use(LoadScript)
+
+Vue.use(ElementUI)
 
 var vm = new Vue({
   router,

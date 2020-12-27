@@ -21,8 +21,8 @@
           <li>
             點擊
             <img
-              style="width: 30px; height: 30px;"
-              src="../assets/images/add.jpg"
+              style="width: 100px; height: 30px;"
+              src="../assets/images/upload.png"
               alt=""
             />
             按鈕可增加您想上傳的檔案
@@ -38,16 +38,16 @@
           <li>標記 <span class="required_sign">*</span> 的欄位為必填的項目</li>
           <li>
             點擊
-            Submit
+            <img
+              style="width: 130px; height: 30px;"
+              src="../assets/images/submit.png"
+            />
             送出您的資訊
           </li>
           <li>事故地址可藉由 google map 進行定位</li>
           <li><b style="color: red;">全部檔案請注意大小不要超過 30 mb</b></li>
         </ul>
       </div>
-    </div>
-    <div id="addbtn" @click="addInput()">
-      <img src="../assets/images/add.jpg" alt="" />
     </div>
     <!-- <div id="qrcode"></div> -->
     <!-- <button @click="callApi()">testcallApi</button> -->
@@ -74,9 +74,6 @@
           <span class="contact100-form-title-2">
             Feel free to drop us a line below!
           </span>
-        </div>
-        <div id="addbtn">
-          <img src="../assets/images/add.jpg" alt="" />
         </div>
         <form
           id="uploadform"
@@ -172,7 +169,6 @@
             />
             <span class="focus-input100"></span>
           </div>
-
           <div
             class="wrap-input100 validate-input"
             data-validate="車牌號碼 is required"
@@ -187,7 +183,6 @@
             />
             <span class="focus-input100"></span>
           </div>
-
           <div class="wrap-input100">
             <span class="label-input100"></span>
             <input
@@ -199,8 +194,27 @@
             />
             <span class="focus-input100"></span>
           </div>
-          累計檔案大小 :
-          <span id="total_size_of_file" :style="sizeWarning">{{ size }}</span>
+          <RecipientDropdownMenu
+            @get-recipient="getRecipient($event)"
+          >
+          </RecipientDropdownMenu>
+          <div class="wrap-input100">
+            <span class="label-input100"></span>
+            <input
+              class="input100"
+              type="text"
+              id="recipient"
+              name="recipient"
+              placeholder="收件人"
+              :value="recipient"
+              readonly
+            />
+            <span class="focus-input100"></span>
+          </div>
+          <div>
+            累計檔案大小 :
+            <span id="total_size_of_file" :style="sizeWarning">{{ size }}</span>
+          </div>
           <ul class="inputlist">
             <template v-for="(field, index) in fields">
               <component
@@ -212,6 +226,12 @@
               ></component>
             </template>
           </ul>
+          <UploadFileBtn
+            @add-size="addSize($event)"
+            @delete-element="minusSize($event)"
+            @push-files="pushFiles()"
+            @remove-from-filelist="removeFromFileList($event)"
+          ></UploadFileBtn>
           <div class="container-contact100-form-btn">
             <button class="contact100-form-btn" type="submit">
               <span>
@@ -246,9 +266,11 @@
 <script>
 import $ from 'jquery'
 import axios from 'axios'
-import cancelImg from '../assets/images/cancel.png' // 從 asset 匯入 cancel 圖片
+import cancelImg from '../assets/images/cancel.png'
 import DateTimePickerInput from './DateTimePickerInput'
 import NewInput from './NewInput'
+import UploadFileBtn from './UploadFileBtn'
+import RecipientDropdownMenu from './RecipientDropdownMenu'
 
 export default {
   name: 'Uploadpage',
@@ -261,12 +283,16 @@ export default {
       sizeWarning: {
         color: ''
       },
-      check: null
+      check: null,
+      fileList: [],
+      recipient: null // for input value
     }
   },
   components: {
     DateTimePickerInput,
-    NewInput
+    NewInput,
+    UploadFileBtn,
+    RecipientDropdownMenu
   },
   beforeCreate () {
     this.$loadScript('/js/jquery.min.js') // for public/js/
@@ -340,23 +366,49 @@ export default {
         $('.blockarea').css('display', 'none')
       }
     },
+    /** 以舊的上傳方式所寫的加總寫法
     // 添加 input
-    addInput: function () {
-      this.fields.push({
-        id: this.id++,
-        input: NewInput
-      })
-      window.scrollTo(0, document.body.scrollHeight)
+    // addInput: function () {
+    //   this.fields.push({
+    //     id: this.id++,
+    //     input: NewInput
+    //   })
+    //   window.scrollTo(0, document.body.scrollHeight)
+    // },
+    // removeInput: function (index, filesize) {
+    //   this.fields.splice(index, 1)
+    //   this.totalSize -= filesize
+    // },
+    // addSize: function (...args) {
+    //   var incomingFileSize = args[0]
+    //   var currentFileSize = args[1]
+    //   this.totalSize -= currentFileSize
+    //   this.totalSize += incomingFileSize
+    // },
+    */
+    // 因應新的上傳方式，改變檔案加總大小寫法
+    addSize: function (event) {
+      this.totalSize = event
     },
-    removeInput: function (index, filesize) {
-      this.fields.splice(index, 1)
-      this.totalSize -= filesize
+    minusSize: function (event) {
+      this.totalSize -= event
     },
-    addSize: function (...args) {
-      var incomingFileSize = args[0]
-      var currentFileSize = args[1]
-      this.totalSize -= currentFileSize
-      this.totalSize += incomingFileSize
+    pushFiles: function () {
+      const inputData = document.querySelectorAll('input')
+      for (const iterator of inputData) {
+        if (iterator.files !== null) {
+          iterator.files.forEach(element => {
+            this.fileList.push(element)
+          })
+        }
+      }
+    },
+    removeFromFileList: function (event) {
+      for (let i = 0; i < this.fileList.length; i++) {
+        if (this.fileList[i].uid === event.uid) {
+          this.fileList.splice(i, 1)
+        }
+      }
     },
     formatBytes: function (bytes, decimals = 2) {
       if (bytes === 0) {
@@ -395,7 +447,9 @@ export default {
         if (iterator.files === null) {
           formData.append(iterator.name, iterator.value)
         } else {
-          formData.append(iterator.name, iterator.files[0])
+          this.fileList.forEach(element => {
+            formData.append(element.name, element)
+          })
         }
       }
       axios
@@ -484,6 +538,9 @@ export default {
         var thisAlert = $(input).parent()
         $(thisAlert).removeClass('alert-validate')
       }
+    },
+    getRecipient: function (event) {
+      this.recipient = event
     },
     callApi: function () {
       console.log(window.sessionStorage.getItem('token'))

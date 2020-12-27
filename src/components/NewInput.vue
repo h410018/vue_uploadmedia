@@ -8,7 +8,7 @@
       accept="video/*, image/*"
       name="filetoupload"
     />
-    <span class="deletebtn" @click="deleteElement(id)">
+    <span class="deletebtn" @click="deleteElement()">
       <img :src="require('../assets/images/cancel.png')" alt="" />
     </span>
     <img

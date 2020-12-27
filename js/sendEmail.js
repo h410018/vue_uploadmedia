@@ -1,6 +1,7 @@
 var nodemailer = require("nodemailer");
 var fs = require("fs");
 var logging = require("./loggingFunc");
+var util = require("util");
 
 module.exports = {
     sendEmail: function (fields, folderPath) {
@@ -25,7 +26,7 @@ module.exports = {
         // 設置郵件內容
         var message = {
             from: "h410018@gmail.com",
-            to: "h410018@gmail.com",
+            to: fields.recipient,
             subject: ' 這是來自 ' + fields.driver_name + ' 先生/女士的現場事故照片',
             text: "Plaintext version of the message",
             html: '<html><body>' +

@@ -31,7 +31,7 @@ app.use(express.urlencoded({
 })) // for parsing application/x-www-form-urlencoded
 app.use(cors()) // for cross origin resource sharing
 
-app.use(express.static(__dirname + "/dist/"))
+app.use(express.static(__dirname + '/dist/'))
 
 app.get('/api/setheader', (req, res) => {
   const secretKey = sha256(ep.secret)
@@ -95,28 +95,36 @@ app.post('/api/upload', (req, res, next) => { // 傳送資料操作
       res.send("<script>alert('Somethong wrong with upload file (form.parse)')</script>")
     } else {
       console.log('!!!!!File is uploaded!!!!')
-      res.set('Content-Type', 'text/html')
+
+      var i = 0
+      Object.keys(files).forEach(element => {
+        i++
+        var ext = files[element].path.slice(files[element].path.lastIndexOf('.')) // 取得副檔名
+        fs.renameSync(files[element].path, 'imagefolder/' + folderPath + '/' + fields.license_plate_number + '_(' + i + ')' + ext)
+        files[element].path = 'imagefolder/' + folderPath + '/' + fields.license_plate_number + '_(' + i + ')' + ext
+      })
+
       console.log(util.inspect({
         fields: fields,
         files: files
       }))
+
       logging.writeProcessLog(folderPath, '!!!!!File is uploaded!!!!\n' + util.inspect({
         fields: fields,
         files: files
       }))
+
       try {
         // 輸出 zip 檔
-        if (files.filetoupload.length >= 2) { // 如果檔案數量>=2， 因為 files 參數在數量>=2時回傳的是一個 object array
-          console.log(files.filetoupload)
+        if (Object.keys(files).length >= 1) {
           var zip = new JSZip()
-          logging.writeProcessLog(folderPath, '\n' + util.inspect(files.filetoupload))
           // 取得每一個 file 的 path 並加入 zip 中
-          files.filetoupload.forEach(element => {
-            if (element.size == 0 || element.name == '') {
-              console.log('This file will not be compressed to a ZIP file :' + element.path)
+          Object.keys(files).forEach(element => {
+            if (files[element].size == 0 || files[element].name == '') {
+              console.log('This file will not be compressed to a ZIP file :' + files[element].path)
             } else {
-              var imageAsBase64 = fs.readFileSync(element.path, 'base64') // 將圖片讀取成 base64 編碼型式的 url
-              var pic_name = element.path.slice(element.path.lastIndexOf('/') + 1)
+              var imageAsBase64 = fs.readFileSync(files[element].path, 'base64') // 將圖片讀取成 base64 編碼型式的 url
+              var pic_name = files[element].path.slice(files[element].path.lastIndexOf('/') + 1)
               zip.file(pic_name, imageAsBase64, { // 新增檔案到 zip 裡
                 base64: true
               })
@@ -137,36 +145,12 @@ app.post('/api/upload', (req, res, next) => { // 傳送資料操作
           }).catch(function (err) {
             logging.writeErrorLog(folderPath, '\n' + err.stack)
           })
-        } else { // 如果檔案數量是0個或1個的狀態
-          if (files.filetoupload.size == 0 || files.filetoupload.name == '') {
-            console.log('This file will not be compressed to a ZIP file :' + files.filetoupload.path)
-          } else {
-            var zip = new JSZip()
-            var imageAsBase64 = fs.readFileSync(files.filetoupload.path, 'base64') // 將圖片讀取成 base64 編碼型式的 url
-            var pic_name = files.filetoupload.path.slice(files.filetoupload.path.lastIndexOf('/') + 1)
-            zip.file(pic_name, imageAsBase64, { // 新增檔案到 zip 裡
-              base64: true
-            })
-            zip.generateAsync({
-              type: 'nodebuffer',
-              compression: 'DEFLATE'
-            }).then(function (content) {
-              fs.writeFile('./zipfolder/' + folderPath + '.zip', content, function (err) {
-                if (err) throw err
-                console.log('export zip done !')
-                res.end(
-                  '<script>setTimeout(function(){ alert("已成功送出您的檔案 !!");  window.location.replace( window.location.origin + "/uploadpage");}, 3000); </script>'
-                )
-                sendEmail(fields, folderPath)
-              })
-            }).catch(function (err) {
-              logging.writeErrorLog(folderPath, '\n' + err.stack)
-            })
-          }
+        } else {
+          console.log('There are no files in request body.')
         }
       } catch (e) {
         logging.writeErrorLog(folderPath, e.message)
-        res.end("<script> alert('請至少上傳一個檔案'); window.location.reload()</script>")
+        res.end("<script> alert('Something wrong !!!'); window.location.reload()</script>")
       }
     }
   })
@@ -174,9 +158,8 @@ app.post('/api/upload', (req, res, next) => { // 傳送資料操作
 
 // this * route is to serve project on different page routes except root `/`
 app.get(/.*/, function (req, res) {
-	res.sendFile(path.join(__dirname, '/dist/index.html'))
+  res.sendFile(path.join(__dirname, '/dist/index.html'))
 })
-
 
 app.listen(PORT, function () {
   var host = this.address().address
