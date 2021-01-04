@@ -28,14 +28,15 @@
             按鈕可增加您想上傳的檔案
           </li>
           <li>
-            點擊
-            <img
-              style="width: 30px; height: 30px;"
-              src="../assets/images/cancel.png"
-            />
-            按鈕可刪除該檔案
+            點擊預覽框右上角按鈕可刪除該檔案
           </li>
-          <li>標記 <span class="required_sign">*</span> 的欄位為必填的項目</li>
+          <li>
+            標記
+            <img
+              style="width: 100px; height: 30px;"
+              src="../assets/images/isRequired.png"
+            />
+            的欄位為必填的項目</li>
           <li>
             點擊
             <img
@@ -296,6 +297,10 @@ export default {
   },
   beforeCreate () {
     this.$loadScript('/js/jquery.min.js') // for public/js/
+    this.$loadScript('https://maps.googleapis.com/maps/api/js?key=AIzaSyAKFWBqlKAGCeS1rMVoaNlwyayu0e0YRes')
+      .then(() => {
+        this.$loadScript('/js/map-custom.js')
+      })
     this.$store.dispatch('setDefaultAuthHeader')
   },
   mounted () {
@@ -319,8 +324,6 @@ export default {
     })
     this.showPopup()
     this.controlAlert()
-    this.$loadScript('https://maps.googleapis.com/maps/api/js?key=AIzaSyAKFWBqlKAGCeS1rMVoaNlwyayu0e0YRes')
-    this.$loadScript('/js/map-custom.js')
   },
   computed: {
     size () {

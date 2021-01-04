@@ -11,7 +11,7 @@ Vue.config.productionTip = false
 
 Vue.use(VueGoogleMaps, {
   load: {
-    key: 'AIzaSyCOjqwIEwZxqICNaRJmBuLcZYdqtuUcA3Y',
+    key: '',
     libraries: '' // necessary for places input
   }
 })
@@ -20,10 +20,8 @@ Vue.use(LoadScript)
 
 Vue.use(ElementUI)
 
-var vm = new Vue({
+new Vue({
   router,
   store,
   render: h => h(App)
 }).$mount('#app')
-
-export { vm }

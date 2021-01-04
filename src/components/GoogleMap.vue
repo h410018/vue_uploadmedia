@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import $ from 'jquery'
+import axios from 'axios'
 
 export default {
   name: 'GoogleMap',
@@ -83,20 +83,13 @@ export default {
       window.close()
     },
     getAddress: function (pos) {
-      $.ajax({
-        async: false,
-        type: 'GET',
+      axios({
+        method: 'GET',
         url: 'https://maps.googleapis.com/maps/api/geocode/json?latlng=' + pos.lat +
               ', ' + pos.lng +
-              '&key=AIzaSyCOjqwIEwZxqICNaRJmBuLcZYdqtuUcA3Y',
-        success: function (data, textStatus, jqXHR) {
-          //
-        },
-        error: function (jqXHR, textStatus, errorThrown) {
-          alert('something wrong with ajax for getting address')
-        }
+              '&key=&language=zh-TW'
       }).then(response => {
-        this.addr = response.results[0].formatted_address
+        this.addr = response.data.results[0].formatted_address
       }).catch(error => {
         console.log(error)
       })

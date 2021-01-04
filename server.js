@@ -55,7 +55,7 @@ app.post('/api/upload', function (req, res, next) { // 驗證 request
   jwtVaildate(req, res, next, req.headers)
 })
 app.post('/api/upload', (req, res, next) => { // 傳送資料操作
-  function addZero(i) {
+  function addZero (i) {
     if (i < 10) {
       i = '0' + i
     }
@@ -157,9 +157,9 @@ app.post('/api/upload', (req, res, next) => { // 傳送資料操作
 })
 
 // this * route is to serve project on different page routes except root `/`
-app.get(/.*/, function (req, res) {
-  res.sendFile(path.join(__dirname, '/dist/index.html'))
-})
+// app.get(/.*/, function (req, res) {
+//   res.sendFile(path.join(__dirname, '/dist/index.html'))
+// })
 
 app.listen(PORT, function () {
   var host = this.address().address
