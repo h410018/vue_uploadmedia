@@ -25,8 +25,9 @@ const routes = [
 ]
 
 const router = new VueRouter({
-  mode: 'history',
-  routes
+  mode: 'hash',
+  routes,
+  base: '/vue_uploadmedia/'
 })
 
 export default router
